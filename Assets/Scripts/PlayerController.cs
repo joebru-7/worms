@@ -33,7 +33,6 @@ public class PlayerController : MonoBehaviour
 		{
 			Debug.Log("Weapon Null");
 			return;
-
 		}
 
 		var isPress = context.started;
@@ -49,7 +48,7 @@ public class PlayerController : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		_characterController.Move(new Vector3(_moveValue.x, -.1f, _moveValue.y) * moveSpeed * Time.deltaTime);
+		_characterController.Move(new Vector3(_moveValue.x, -.1f, _moveValue.y) * (moveSpeed * Time.deltaTime));
 	
 	}
 }
