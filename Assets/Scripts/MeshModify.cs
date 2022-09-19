@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+
 
 struct Triangle
 {
@@ -24,8 +26,53 @@ struct Triangle
 		li.Add(c);
 
 	}
+
+	public Line Intersection(Triangle other)
+	{
+		var me =  new Plane(this);
+		var you = new Plane(other);
+
+
+		var l = me.Intersect(you);
+
+		return l;
+	}
 }
 
+struct Plane
+{
+	public Vector3 position;
+	public Vector3 normal;
+
+	public Plane(Triangle t)
+	{
+		Math3d.PlaneFrom3Points(out normal, out position, t.a, t.b, t.c);
+	}
+
+	public Line Intersect(Plane other)
+	{
+		Line l = new();
+
+		Math3d.PlanePlaneIntersection(out l.Point,out l.Vector, this.normal,this.position,other.normal,other.position);
+
+		return l;
+
+	}
+}
+
+struct Line
+{
+	public Vector3 Point;
+	public Vector3 Vector;
+	public float Len;
+
+	public Line(Vector3 point, Vector3 vector, float len = 0)
+	{
+		this.Point = point;
+		this.Vector = vector;
+		this.Len = len;
+	}
+}
 
 
 public class MeshModify : MonoBehaviour
@@ -34,12 +81,10 @@ public class MeshModify : MonoBehaviour
 
 
 
+
 	// Start is called before the first frame update
 	void Start()
 	{
-
-		return;
-
 		var a = GetComponent<MeshFilter>();
 		var m = a.mesh;
 		var x = m.GetVertexBuffer(0);
@@ -57,10 +102,8 @@ public class MeshModify : MonoBehaviour
 			tris.Add(new Triangle(verts[i], verts[i + 1], verts[i + 2]));
 		}
 
-		
-
 		List<int> ints = new List<int>();
-		for (int i = 1; i < 10_000_000; i++)
+		for (int i = 1; i < 100; i++)
 		{
 			tris.Add(new Triangle(
 				new Vector3(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10)),

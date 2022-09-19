@@ -6,6 +6,7 @@ public class Weapon1 :  IWeapon
 	public GameObject BulletPrefab;
 	public Transform SpawnPoint;
 	private Transform myTrans;
+	private Transform parentTrans;
 	public static BulletPool pool;
 
 	public void Start()
@@ -13,6 +14,7 @@ public class Weapon1 :  IWeapon
 		if (pool == null)
 			pool = new BulletPool(BulletPrefab);
 		myTrans = GetComponent<Transform>();
+		parentTrans = GetComponentInParent<Transform>();
 	}
 	public override void Shoot()
 	{
@@ -24,5 +26,10 @@ public class Weapon1 :  IWeapon
 		bullet.transform.position = SpawnPoint.position;
 		bullet.GetComponent<Rigidbody>().AddForce((SpawnPoint.position- myTrans.position).normalized * 1000);
 
+	}
+
+	public override void Aim(float rad)
+	{
+		transform.Rotate(Vector3.right, Mathf.Rad2Deg * rad);
 	}
 }
