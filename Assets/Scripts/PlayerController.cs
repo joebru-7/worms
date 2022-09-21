@@ -19,6 +19,26 @@ public class PlayerController : MonoBehaviour
 	public float rotationSpeed = 1;
 	[SerializeField] public IWeapon weapon;
 
+
+	[SerializeField] private bool _active = false;
+	public bool Active { 
+		get => _active;
+		set {
+			_active = value;
+			UpdateActive();
+		
+		}
+
+	}
+
+	private void UpdateActive()
+	{
+		if (_active)
+		{
+
+		}
+	}
+
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -38,7 +58,9 @@ public class PlayerController : MonoBehaviour
 
 	public void Shoot(InputAction.CallbackContext context)
 	{
-		if(weapon == null)
+		if (!_active)
+			return;
+		if (weapon == null)
 		{
 			Debug.Log("Weapon Null");
 			return;
@@ -59,6 +81,9 @@ public class PlayerController : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		if (!_active)
+			return;
+
 		var newRotation = _moveValue.x * rotationSpeed * Time.deltaTime;
 		_rotation += newRotation;
 

@@ -37,15 +37,20 @@ struct Triangle
 		var l = me.Intersect(you);
 
 		int numIntersections = 0;
-		Vector3[] p = new Vector3[/*2*/3];
+		Vector3[] p = new Vector3[2];
 
 		for (int i = 0; i < 3; i++)
 		{
 			Math3d.ClosestPointsOnTwoLines(out Vector3 p1, out Vector3 p2, verts[i], verts[i] - verts[(i + 1) % 3], l.Point, l.Vector);
 
-			if (/*(p1 - p2).sqrMagnitude < closenessConstant
-				&&*/
+			if (
 				Math3d.PointOnWhichSideOfLineSegment(verts[i], verts[(i + 1) % 3], p1) == 0
+				&&
+				//(p1 - p2).sqrMagnitude < closenessConstant
+				//&&
+				(p1 - verts[i]).sqrMagnitude < closenessConstant
+				&&
+				(p1 - verts[(i + 1) % 3]).sqrMagnitude < closenessConstant
 				)
 			{
 				p[numIntersections] = p1;
@@ -196,7 +201,10 @@ public class MeshModify : MonoBehaviour
 
 		var stopTime = System.DateTime.Now;
 
-		Debug.Log( stopTime - startTime);
+		var timeTaken = stopTime - startTime;
+
+		Debug.Log( timeTaken.Milliseconds + "ms, " + (timeTaken.TotalSeconds * 60) + " frames");
+
 
 		/*
 		List<int> ints = new List<int>();
