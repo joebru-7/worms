@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -158,8 +159,10 @@ public class MeshModify : MonoBehaviour
 			otherTris.Add(new Triangle(mesh.vertices[mesh.triangles[i]], mesh.vertices[mesh.triangles[i + 1]], mesh.vertices[mesh.triangles[i + 2]]));
 		}
 
-		
+
 		//remove intersecting triangles from meshes
+		List<int> ind = new();
+		List<int> jnd = new();
 
 		for (int i = myTris.Count - 1; i >= 0; i--)
 		{
@@ -167,11 +170,24 @@ public class MeshModify : MonoBehaviour
 			{
 				if (myTris[i].isIntersecting(otherTris[j]))
 				{
-					myTris.RemoveAt(i);
-					otherTris.RemoveAt(j);
+					ind.Add(i);
+					jnd.Add(j);
 				}
 			}
 		}
+		
+		ind = ind.Distinct().ToList();
+		jnd = jnd.Distinct().ToList();
+
+		ind.Sort();
+		jnd.Sort();
+
+
+		for (int i = ind.Count() - 1; i >= 0; i--)
+			myTris.RemoveAt(ind[i]);
+
+		for (int j = jnd.Count() - 1; j >= 0; j--)
+			otherTris.RemoveAt(ind[j]);
 
 		// TODO remove other half
 

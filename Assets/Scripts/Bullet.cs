@@ -7,6 +7,10 @@ public class Bullet : MonoBehaviour
 	Rigidbody rb;
 	Collider col;
 	Transform trans;
+
+	public GameObject Explosion;
+
+	private GameObject _explosion;
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -41,18 +45,21 @@ public class Bullet : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		trans.localScale = Vector3.one;
+		//trans.localScale = Vector3.one;
 		rb.useGravity = false;
 		rb.velocity = Vector3.zero;
 		col.enabled = false;
-		
 
+		_explosion = Instantiate(Explosion,transform.position,Quaternion.identity);
+			
 		Invoke(nameof(ExplosionCleanup), 1);
 	}
 
 	public void ExplosionCleanup()
 	{
 		trans.localScale = Vector3.one *.1f;
+		Destroy(_explosion);
 		gameObject.SetActive(false);
+		//PlayerManager.Next();
 	}
 }

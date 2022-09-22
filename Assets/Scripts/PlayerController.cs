@@ -1,10 +1,40 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
+
+public static class PlayerManager
+{
+	private static int currentPlayer = 0;
+	private static List<PlayerController> playerControllers = new();
+
+	public static void Register(PlayerController p) => playerControllers.Add(p);
+	public static void Unregister(PlayerController p) => playerControllers.Remove(p);
+
+	public static void SetActive(PlayerController p)
+	{
+		int index = playerControllers.IndexOf(p);
+		if (index != -1)
+			throw new InvalidOperationException("player not managed");
+
+		playerControllers[currentPlayer].Active = false;
+		currentPlayer = index;
+		playerControllers[currentPlayer].Active = true;
+
+	}
+	public static void Next()
+	{
+		playerControllers[currentPlayer].Active = false;
+		currentPlayer = (currentPlayer +1 )%playerControllers.Count;
+		playerControllers[currentPlayer].Active = true;
+	}
+}
 
 public class PlayerController : MonoBehaviour
 {
@@ -19,14 +49,17 @@ public class PlayerController : MonoBehaviour
 	public float rotationSpeed = 1;
 	[SerializeField] public IWeapon weapon;
 
+	private Camera _camera;
+
 
 	[SerializeField] private bool _active = false;
+	private bool _hasFiered;
+
 	public bool Active { 
 		get => _active;
 		set {
 			_active = value;
 			UpdateActive();
-		
 		}
 
 	}
@@ -35,14 +68,21 @@ public class PlayerController : MonoBehaviour
 	{
 		if (_active)
 		{
-
+			_camera.enabled = true;
+			_hasFiered = false;
+		}
+		else
+		{
+			_camera.enabled = false;
 		}
 	}
 
 	// Start is called before the first frame update
 	void Start()
 	{
+		PlayerManager.Register(this);
 		_characterController = GetComponent<CharacterController>();
+		_camera = GetComponentInChildren<Camera>(true);
 	}
 
 	public void Move(InputAction.CallbackContext context)
@@ -58,7 +98,7 @@ public class PlayerController : MonoBehaviour
 
 	public void Shoot(InputAction.CallbackContext context)
 	{
-		if (!_active)
+		if (!_active || _hasFiered)
 			return;
 		if (weapon == null)
 		{
@@ -72,6 +112,7 @@ public class PlayerController : MonoBehaviour
 		if (isPress)
 		{
 			weapon.Shoot();
+			//_hasFiered = true;
 			//Debug.Log("Pew");
 		}
 	}
