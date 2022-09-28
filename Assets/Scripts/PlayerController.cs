@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour
 
 	private Camera _camera;
 
+	private int hp;
 
 	[SerializeField] private bool _active = false;
 	private bool _hasFiered;

@@ -30,7 +30,7 @@ struct Triangle
 
 	public bool isIntersecting(Triangle other)
 	{
-		const float closenessConstant = 0.000000001f;
+		const float closenessConstant = 0.1e-5f;
 
 		var me =  new Plane(this);
 		var you = new Plane(other);
@@ -46,12 +46,13 @@ struct Triangle
 
 			if (
 				Math3d.PointOnWhichSideOfLineSegment(verts[i], verts[(i + 1) % 3], p1) == 0
-				&&
-				//(p1 - p2).sqrMagnitude < closenessConstant
-				//&&
-				(p1 - verts[i]).sqrMagnitude < closenessConstant
-				&&
-				(p1 - verts[(i + 1) % 3]).sqrMagnitude < closenessConstant
+				)
+				if (
+				(p1 - p2).magnitude < float.Epsilon
+				)
+				if((p1 - verts[i]).magnitude > 0.1e-20f
+				)
+				if((p1 - verts[(i + 1) % 3]).magnitude > 0.1e-20f
 				)
 			{
 				p[numIntersections] = p1;
@@ -65,9 +66,9 @@ struct Triangle
 		{
 			Math3d.ClosestPointsOnTwoLines(out Vector3 p1, out Vector3 p2, other.verts[i], other.verts[i] - other.verts[(i + 1) % 3], l.Point, l.Vector);
 
-			if ((p1 - p2).sqrMagnitude < closenessConstant
-				 &&
-				Math3d.PointOnWhichSideOfLineSegment(verts[i], verts[(i + 1) % 3], p1) == 0
+			if ((p1 - p2).magnitude < closenessConstant
+				 )if(
+				Math3d.PointOnWhichSideOfLineSegment(other.verts[i], other.verts[(i + 1) % 3], p2) == 0
 				)
 			{
 				if(Math3d.PointOnWhichSideOfLineSegment(p[0], p[1], p1) == 0)
@@ -149,17 +150,17 @@ public class MeshModify : MonoBehaviour
 
 		for (int i = 0; i < m.triangles.Length / 3; i++)
 		{
-			myTris.Add(new Triangle(verts[m.triangles[i]], verts[m.triangles[i + 1]], verts[m.triangles[i + 2]]));
+			myTris.Add(new Triangle(verts[m.triangles[i*3]], verts[m.triangles[i*3 + 1]], verts[m.triangles[i*3 + 2]]));
 		}
 
 		List<Triangle> otherTris = new();
 
 		for (int i = 0; i < mesh.triangles.Length / 3; i++)
 		{
-			otherTris.Add(new Triangle(mesh.vertices[mesh.triangles[i]], mesh.vertices[mesh.triangles[i + 1]], mesh.vertices[mesh.triangles[i + 2]]));
+			otherTris.Add(new Triangle(mesh.vertices[mesh.triangles[i * 3]], mesh.vertices[mesh.triangles[i * 3 + 1]], mesh.vertices[mesh.triangles[i * 3 + 2]]));
 		}
 
-
+		
 		//remove intersecting triangles from meshes
 		List<int> ind = new();
 		List<int> jnd = new();
@@ -196,15 +197,18 @@ public class MeshModify : MonoBehaviour
 
 		// assemble triangles to single mesh
 
+		
 		List<Vector3> vrl = new();
 		foreach (var t in myTris)
 		{
 			t.AddToList(vrl);
 		}
+		
 		foreach (var t in otherTris)
 		{
 			t.AddToList(vrl);
 		}
+		
 
 		int[] indexes = new int[vrl.Count];
 		for (int i = 0; i < vrl.Count; i++)
@@ -214,6 +218,15 @@ public class MeshModify : MonoBehaviour
 
 		m.SetVertices(vrl);
 		m.SetTriangles(indexes, 0);
+
+		m.RecalculateNormals();
+		m.RecalculateTangents();
+		m.RecalculateBounds();
+		m.MarkModified();
+		m.Optimize();
+		m.name = "custom";
+
+		a.mesh = m;
 
 		var stopTime = System.DateTime.Now;
 
