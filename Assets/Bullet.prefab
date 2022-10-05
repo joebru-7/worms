@@ -112,6 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Explosion: {fileID: 100000, guid: 15ca5b8fa431dc04291a79cadcd19874, type: 3}
+  Carver: {fileID: 1890034394563001169, guid: 0cb1fb5c288d8fb4c8a1dd334558773a, type: 3}
 --- !u!54 &7960985891790410027
 Rigidbody:
   m_ObjectHideFlags: 0

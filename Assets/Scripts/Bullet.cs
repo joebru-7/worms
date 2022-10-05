@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Parabox.CSG;
 public class Bullet : MonoBehaviour
 {
 	Rigidbody rb;
@@ -9,6 +9,7 @@ public class Bullet : MonoBehaviour
 	Transform trans;
 
 	public GameObject Explosion;
+	public GameObject Carver;
 
 	private GameObject _explosion;
 	// Start is called before the first frame update
@@ -17,6 +18,7 @@ public class Bullet : MonoBehaviour
 		rb = GetComponent<Rigidbody>();
 		col = GetComponent<Collider>();
 		trans = GetComponent<Transform>();
+		//Carver = GameObject.CreatePrimitive(PrimitiveType.Cube);
 	}
 
 	// Update is called once per frame
@@ -51,7 +53,45 @@ public class Bullet : MonoBehaviour
 		col.enabled = false;
 
 		_explosion = Instantiate(Explosion,transform.position,Quaternion.identity);
-			
+
+		var _carver = Instantiate(Carver, transform.position, transform.rotation);
+		//Carver.transform.SetPositionAndRotation(transform.position, transform.rotation);
+		var colls = Physics.OverlapSphere(transform.position, 3);
+
+		foreach (var col in colls)
+		{
+			switch(col.tag)
+			{
+				case "Terrain":
+					Debug.Log("Terr " + col);
+
+					Model m = CSG.Subtract(col.gameObject, _carver);
+					Mesh mesh = m.mesh;
+					mesh.name = "custom";
+					mesh.Optimize();
+					Debug.Log(mesh.triangles.Length);
+
+					col.GetComponent<MeshFilter>().mesh = mesh;
+					col.GetComponent<MeshFilter>().sharedMesh = mesh;
+					col.GetComponent<MeshCollider>().sharedMesh = mesh;
+
+					col.GetComponent<MeshRenderer>().materials = m.materials.ToArray();
+					col.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+					col.transform.localScale = Vector3.one;
+
+					break;
+				case "Player":
+					Debug.Log("Play " + col);
+					break;
+				default:
+					break;
+			}
+		}
+
+		Destroy(_carver);
+
+		//Model result = CSG.Subtract(cube, sphere);
+
 		Invoke(nameof(ExplosionCleanup), 1);
 	}
 
