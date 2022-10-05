@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,56 +9,37 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public static class PlayerManager
-{
-	private static int currentPlayer = 0;
-	private static List<PlayerController> playerControllers = new();
-
-	public static void Register(PlayerController p) => playerControllers.Add(p);
-	public static void Unregister(PlayerController p) => playerControllers.Remove(p);
-
-	public static void SetActive(PlayerController p)
-	{
-		int index = playerControllers.IndexOf(p);
-		if (index != -1)
-			throw new InvalidOperationException("player not managed");
-
-		playerControllers[currentPlayer].Active = false;
-		currentPlayer = index;
-		playerControllers[currentPlayer].Active = true;
-
-	}
-	public static void Next()
-	{
-		playerControllers[currentPlayer].Active = false;
-		currentPlayer = (currentPlayer +1 )%playerControllers.Count;
-		playerControllers[currentPlayer].Active = true;
-	}
-}
-
 public class PlayerController : MonoBehaviour
 {
 
-	//[SerializeField] [range]
-	private CharacterController _characterController;
+	//
 	private Vector2 _moveValue;
 	private Vector2 _lockValue;
 
-	private float _rotation = 0;
-	[SerializeField] public float moveSpeed;
+	public float moveSpeed;
+	public float JumpStrength = 5;
 	public float rotationSpeed = 1;
-	[SerializeField] public IWeapon weapon;
+	public float gravity = 9.82f;
+	private float _rotation = 0;
+	private float _fallspeed = 0;
 
+	public int hp = 100;
+
+	private CharacterController _characterController;
 	private Camera _camera;
+	private PlayerInput _input;
 
-	private int hp;
-
-	[SerializeField] private bool _active = false;
+	private WeaponManager _weaponManager;
+	private IWeapon weapon;
 	private bool _hasFiered;
 
-	public bool Active { 
+
+	[SerializeField] private bool _active = false;
+	public bool Active
+	{
 		get => _active;
-		set {
+		set
+		{
 			_active = value;
 			UpdateActive();
 		}
@@ -67,15 +48,20 @@ public class PlayerController : MonoBehaviour
 
 	private void UpdateActive()
 	{
+		_camera.enabled = _active;
+		_input.enabled = _active;
 		if (_active)
 		{
-			_camera.enabled = true;
 			_hasFiered = false;
 		}
 		else
 		{
-			_camera.enabled = false;
 		}
+	}
+
+	public void Damage(int amt)
+	{
+		hp -= amt;
 	}
 
 	// Start is called before the first frame update
@@ -84,11 +70,43 @@ public class PlayerController : MonoBehaviour
 		PlayerManager.Register(this);
 		_characterController = GetComponent<CharacterController>();
 		_camera = GetComponentInChildren<Camera>(true);
+
+		_weaponManager = GetComponentInChildren<WeaponManager>();
+		_weaponManager.Init(ref weapon);
+
+		_input = GetComponent<PlayerInput>();
+	}
+
+	void Update()
+	{
+		if (!_characterController.isGrounded)
+		{
+			_fallspeed += gravity * Time.deltaTime;
+			_characterController.Move(Vector3.down * (_fallspeed * Time.deltaTime));
+		}
+		else
+		{
+			_fallspeed = 0;
+		}
+
+		if (!_active)
+			return;
+
+		var newRotation = _moveValue.x * rotationSpeed * Time.deltaTime;
+		_rotation += newRotation;
+
+		transform.Rotate(Vector3.up, Mathf.Rad2Deg * newRotation);
+
+		var moveVector = new Vector3(_moveValue.y * Mathf.Sin(_rotation), -.1f, _moveValue.y * Mathf.Cos(_rotation)) * (moveSpeed * Time.deltaTime);
+
+		_characterController.Move(moveVector);
+
+		weapon.Aim(_lockValue.y * Time.deltaTime);
 	}
 
 	public void Move(InputAction.CallbackContext context)
 	{
-		
+
 		_moveValue = context.ReadValue<Vector2>();
 		//Debug.Log(_moveValue);
 	}
@@ -103,8 +121,7 @@ public class PlayerController : MonoBehaviour
 			return;
 		if (weapon == null)
 		{
-			Debug.Log("Weapon Null");
-			return;
+			throw new NullReferenceException("Weapon is null");
 		}
 
 		var isPress = context.started;
@@ -113,29 +130,31 @@ public class PlayerController : MonoBehaviour
 		if (isPress)
 		{
 			weapon.Shoot();
-			//_hasFiered = true;
-			//Debug.Log("Pew");
+			_hasFiered = true;
+
+			Invoke(nameof(nextPlayer), 1);
 		}
 	}
 
-
-
-	// Update is called once per frame
-	void Update()
+	void nextPlayer()
 	{
-		if (!_active)
-			return;
+		PlayerManager.Next();
+	}
 
-		var newRotation = _moveValue.x * rotationSpeed * Time.deltaTime;
-		_rotation += newRotation;
+	public void Switch(InputAction.CallbackContext context)
+	{
+		if (context.started && Active)
+		{
+			_weaponManager.SwitchWeapon(ref weapon);
+		}
+	}
 
-		transform.Rotate(Vector3.up, Mathf.Rad2Deg*newRotation);
-
-		var moveVector = new Vector3(_moveValue.y * Mathf.Sin(_rotation), -.1f, _moveValue.y * Mathf.Cos(_rotation)) * (moveSpeed * Time.deltaTime);
-		
-		_characterController.Move(moveVector);
-
-		weapon.Aim(_lockValue.y * Time.deltaTime);
-
+	public void Jump(InputAction.CallbackContext context)
+	{
+		if (context.started && Active && _characterController.isGrounded)
+		{
+			_characterController.Move(new Vector3(0, 0.01f, 0));
+			_fallspeed = -JumpStrength;
+		}
 	}
 }

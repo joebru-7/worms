@@ -30,7 +30,7 @@ struct Triangle
 
 	public bool isIntersecting(Triangle other)
 	{
-		const float closenessConstant = 0.1e-5f;
+		//const float closenessConstant = 0.1e-5f;
 
 		var me =  new Plane(this);
 		var you = new Plane(other);
@@ -159,11 +159,8 @@ public class MeshModify : MonoBehaviour
 	}
 
 	// Start is called before the first frame update
-	void Start()
+	public void Subtract(GameObject subtracted)
 	{
-		Test();
-		return;
-
 		var startTime = System.DateTime.Now;
 
 		var a = GetComponent<MeshFilter>();

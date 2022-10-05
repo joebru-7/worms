@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		if (transform.position.y < -100) 
+		if (transform.position.y < -100)
 			gameObject.SetActive(false);
 	}
 
@@ -53,6 +53,7 @@ public class Bullet : MonoBehaviour
 		col.enabled = false;
 
 		_explosion = Instantiate(Explosion,transform.position,Quaternion.identity);
+		Invoke(nameof(ExplosionCleanup), 1);
 
 		var _carver = Instantiate(Carver, transform.position, transform.rotation);
 		//Carver.transform.SetPositionAndRotation(transform.position, transform.rotation);
@@ -70,7 +71,7 @@ public class Bullet : MonoBehaviour
 					mesh.name = "custom";
 					mesh.Optimize();
 					Debug.Log(mesh.triangles.Length);
-
+					
 					col.GetComponent<MeshFilter>().mesh = mesh;
 					col.GetComponent<MeshFilter>().sharedMesh = mesh;
 					col.GetComponent<MeshCollider>().sharedMesh = mesh;
@@ -82,6 +83,7 @@ public class Bullet : MonoBehaviour
 					break;
 				case "Player":
 					Debug.Log("Play " + col);
+					col.GetComponent<PlayerController>().Damage(5);
 					break;
 				default:
 					break;
@@ -92,7 +94,7 @@ public class Bullet : MonoBehaviour
 
 		//Model result = CSG.Subtract(cube, sphere);
 
-		Invoke(nameof(ExplosionCleanup), 1);
+		
 	}
 
 	public void ExplosionCleanup()
@@ -100,6 +102,5 @@ public class Bullet : MonoBehaviour
 		trans.localScale = Vector3.one *.1f;
 		Destroy(_explosion);
 		gameObject.SetActive(false);
-		//PlayerManager.Next();
 	}
 }

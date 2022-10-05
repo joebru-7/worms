@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Weapon1 :  IWeapon
+public class Weapon1 : IWeapon
 {
 	public GameObject BulletPrefab;
 	public Transform SpawnPoint;
