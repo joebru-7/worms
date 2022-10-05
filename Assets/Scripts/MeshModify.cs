@@ -42,17 +42,20 @@ struct Triangle
 
 		for (int i = 0; i < 3; i++)
 		{
-			Math3d.ClosestPointsOnTwoLines(out Vector3 p1, out Vector3 p2, verts[i], verts[i] - verts[(i + 1) % 3], l.Point, l.Vector);
+			//Math3d.ClosestPointsOnTwoLines(out Vector3 p1, out Vector3 p2, verts[i], verts[i] - verts[(i + 1) % 3], l.Point, l.Vector);
+
+			if (!Math3d.LineLineIntersection(out Vector3 p1, verts[i], verts[i] - verts[(i + 1) % 3], l.Point, l.Vector))
+				continue;
+			
+			//if ((p1 - verts[i]).magnitude < closenessConstant) 
+			//	return true;
 
 			if (
-				Math3d.PointOnWhichSideOfLineSegment(verts[i], verts[(i + 1) % 3], p1) == 0
-				)
-				if (
-				(p1 - p2).magnitude < float.Epsilon
-				)
-				if((p1 - verts[i]).magnitude > 0.1e-20f
-				)
-				if((p1 - verts[(i + 1) % 3]).magnitude > 0.1e-20f
+				Math3d.PointOnWhichSideOfLineSegment(this.verts[i], this.verts[(i + 1) % 3], p1) == 0
+				
+				//)if ((p1 - p2).magnitude < float.Epsilon
+				//)if((p1 - verts[i]).magnitude > 0.1e-20f
+				//)if((p1 - verts[(i + 1) % 3]).magnitude > 0.1e-20f
 				)
 			{
 				p[numIntersections] = p1;
@@ -64,14 +67,17 @@ struct Triangle
 
 		for (int i = 0; i < 3; i++)
 		{
-			Math3d.ClosestPointsOnTwoLines(out Vector3 p1, out Vector3 p2, other.verts[i], other.verts[i] - other.verts[(i + 1) % 3], l.Point, l.Vector);
+			if (!Math3d.LineLineIntersection(out Vector3 p1, other.verts[i], other.verts[i] - other.verts[(i + 1) % 3], l.Point, l.Vector))
+				continue;
 
-			if ((p1 - p2).magnitude < closenessConstant
-				 )if(
-				Math3d.PointOnWhichSideOfLineSegment(other.verts[i], other.verts[(i + 1) % 3], p2) == 0
+			//if ((p1 - p2).magnitude < closenessConstant
+			//	 )
+			if(
+				Math3d.PointOnWhichSideOfLineSegment(other.verts[i], other.verts[(i + 1) % 3], Math3d.ProjectPointOnLineSegment(other.verts[i], other.verts[(i + 1) % 3], p1)) == 0
 				)
 			{
-				if(Math3d.PointOnWhichSideOfLineSegment(p[0], p[1], p1) == 0)
+				
+				if(Math3d.PointOnWhichSideOfLineSegment(p[0], p[1], Math3d.ProjectPointOnLineSegment(p[0], p[1], p1)) == 0)
 					return true;
 			}
 		}
@@ -145,19 +151,26 @@ public class MeshModify : MonoBehaviour
 
 		//generate triangels from meshes
 
-		var verts = m.vertices;
+		Vector3[] verts = m.vertices;
 		List<Triangle> myTris = new();
 
 		for (int i = 0; i < m.triangles.Length / 3; i++)
 		{
-			myTris.Add(new Triangle(verts[m.triangles[i*3]], verts[m.triangles[i*3 + 1]], verts[m.triangles[i*3 + 2]]));
+			myTris.Add(new Triangle(
+						a.transform.TransformPoint(verts[m.triangles[i * 3]]),
+						a.transform.TransformPoint(verts[m.triangles[i * 3 + 1]]),
+						a.transform.TransformPoint(verts[m.triangles[i * 3 + 2]])));
 		}
 
 		List<Triangle> otherTris = new();
 
 		for (int i = 0; i < mesh.triangles.Length / 3; i++)
 		{
-			otherTris.Add(new Triangle(mesh.vertices[mesh.triangles[i * 3]], mesh.vertices[mesh.triangles[i * 3 + 1]], mesh.vertices[mesh.triangles[i * 3 + 2]]));
+			otherTris.Add(
+				new Triangle(
+				mesh.vertices[mesh.triangles[i * 3]], 
+				mesh.vertices[mesh.triangles[i * 3 + 1]], 
+				mesh.vertices[mesh.triangles[i * 3 + 2]]));
 		}
 
 		
@@ -188,7 +201,7 @@ public class MeshModify : MonoBehaviour
 			myTris.RemoveAt(ind[i]);
 
 		for (int j = jnd.Count() - 1; j >= 0; j--)
-			otherTris.RemoveAt(ind[j]);
+			otherTris.RemoveAt(jnd[j]);
 
 		// TODO remove other half
 
@@ -207,6 +220,11 @@ public class MeshModify : MonoBehaviour
 		foreach (var t in otherTris)
 		{
 			t.AddToList(vrl);
+		}
+
+		for (int i = 0; i < vrl.Count; i++)
+		{
+			vrl[i] = a.transform.InverseTransformPoint(vrl[i]);
 		}
 		
 
