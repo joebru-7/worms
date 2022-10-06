@@ -64,7 +64,7 @@ public class Bullet : MonoBehaviour
 			switch(col.tag)
 			{
 				case "Terrain":
-					Debug.Log("Terr " + col);
+					//Debug.Log("Terr " + col);
 
 					Model m = CSG.Subtract(col.gameObject, _carver);
 					Mesh mesh = m.mesh;
@@ -82,7 +82,7 @@ public class Bullet : MonoBehaviour
 
 					break;
 				case "Player":
-					Debug.Log("Play " + col);
+					//Debug.Log("Play " + col);
 					col.GetComponent<PlayerController>().Damage(5);
 					break;
 				default:

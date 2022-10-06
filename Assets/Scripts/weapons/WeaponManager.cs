@@ -7,8 +7,7 @@ using UnityEngine;
 public class WeaponManager : MonoBehaviour
 {
 	public IWeapon[] weapons;
-	[SerializeField]
-	int _selected;
+	[SerializeField] int _selected;
 	private IWeapon _currentWeapon;
 
 	public int Selected { get => _selected; set => _selected = value%(weapons.Length); }
@@ -17,7 +16,7 @@ public class WeaponManager : MonoBehaviour
 	public void Init(ref IWeapon w)
 	{
 		if (Selected >= weapons.Length)
-			throw new IndexOutOfRangeException("Selected weapon greater than numer of weapons");
+			throw new IndexOutOfRangeException("Selected weapon greater than number of weapons");
 		CreateWeapon(Selected);
 		w = _currentWeapon;
 	}

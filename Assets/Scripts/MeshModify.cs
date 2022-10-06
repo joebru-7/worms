@@ -8,9 +8,9 @@ using Parabox.CSG;
 struct Triangle
 {
 	public Vector3[] verts;
-	public Vector3 a { get => verts[0]; set { verts[0] = value; } }
-	public Vector3 b { get => verts[1]; set { verts[1] = value; } }
-	public Vector3 c { get => verts[2]; set { verts[2] = value; } }
+	public Vector3 a { get => verts[0]; set => verts[0] = value; }
+	public Vector3 b { get => verts[1]; set => verts[1] = value; }
+	public Vector3 c { get => verts[2]; set => verts[2] = value; }
 
 	public Triangle(Vector3 a,Vector3 b,Vector3 c)
 	{
@@ -25,7 +25,6 @@ struct Triangle
 		li.Add(a);
 		li.Add(b);
 		li.Add(c);
-
 	}
 
 	public bool isIntersecting(Triangle other)

@@ -43,12 +43,14 @@ public class VolumetricComponent : ExploderComponent {
 	}
 
 	private void initParticleSystem() {
+#pragma warning disable CS0618 // Type or member is obsolete
 		GetComponent<ParticleSystem>().maxParticles = maxParticles;
 		GetComponent<ParticleSystem>().emissionRate = 0;
 		GetComponent<ParticleSystem>().startSpeed = 0;
 		GetComponent<ParticleSystem>().startSize = 1.0f;
 		GetComponent<ParticleSystem>().simulationSpace = ParticleSystemSimulationSpace.World;
 		GetComponent<ParticleSystem>().startLifetime = duration;
+#pragma warning restore CS0618 // Type or member is obsolete
 
 		GetComponent<ParticleSystem>().Emit(startEmission);
 		curCount = GetComponent<ParticleSystem>().GetParticles(particles);
@@ -56,7 +58,9 @@ public class VolumetricComponent : ExploderComponent {
 		for (int i = 0; i < curCount; i++) {
 			directions[i] = Random.onUnitSphere;
 			particles[i].position = transform.position;
+#pragma warning disable CS0618 // Type or member is obsolete
 			particles[i].color = colorOverLifetime.Evaluate(0);
+#pragma warning restore CS0618 // Type or member is obsolete
 		}
 
 		GetComponent<ParticleSystem>().SetParticles(particles, curCount);
@@ -104,7 +108,9 @@ public class VolumetricComponent : ExploderComponent {
 	private void makeStep() {
 		float curSize = 2 * speed * Mathf.Sqrt ((Time.time - exploder.explosionTime) / emission) * particleSizeMultiplyer;
 		for (int i = 0; i < curCount; i++) {
+#pragma warning disable CS0618 // Type or member is obsolete
 			particles[i].size = curSize;
+#pragma warning restore CS0618 // Type or member is obsolete
 			moveParticle(i, Time.deltaTime * speed);
 			particles[i].rotation = Time.time;
 		}
@@ -119,7 +125,9 @@ public class VolumetricComponent : ExploderComponent {
 		Color curColor = colorOverLifetime.Evaluate((Time.time - exploder.explosionTime) / duration);
 		curColor.a = alpha;
 		for (int i = 0; i < curCount; i++) {
+#pragma warning disable CS0618
 			particles[i].color = curColor;
+#pragma warning restore CS0618
 		}
 	}
 	

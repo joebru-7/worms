@@ -9,3 +9,4 @@ Space	Jump
 Q/E  	aim up/down
 X    	switch weapon
 Enter	shoot
+

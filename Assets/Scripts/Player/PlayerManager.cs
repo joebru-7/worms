@@ -2,13 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public static class PlayerManager
 {
 	private static int currentPlayer = 0;
-	private static List<PlayerController> playerControllers = new();
+	private static readonly List<PlayerController> playerControllers = new();
 
-	public static void Register(PlayerController p) => playerControllers.Add(p);
-	public static void Unregister(PlayerController p) => playerControllers.Remove(p);
+	public static void Register(PlayerController p)
+	{
+		playerControllers.Add(p);
+		p.Active = (playerControllers.Count == 1);
+	}
+
+	public static void Unregister(PlayerController p)
+	{
+		p.Active = false;
+		playerControllers.Remove(p);
+	}
 
 	public static void SetActive(PlayerController p)
 	{

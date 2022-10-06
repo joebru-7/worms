@@ -43,6 +43,7 @@ public class VolumetricComponent2D : ExploderComponent{
 	}
 	
 	private void initParticleSystem() {
+#pragma warning disable CS0618 // Type or member is obsolete
 		GetComponent<ParticleSystem>().maxParticles = maxParticles;
 		GetComponent<ParticleSystem>().emissionRate = 0;
 		GetComponent<ParticleSystem>().startSpeed = 0;
@@ -60,6 +61,7 @@ public class VolumetricComponent2D : ExploderComponent{
 		
 		curCount = startEmission;
 		GetComponent<ParticleSystem>().SetParticles(particles, curCount);
+#pragma warning restore CS0618 // Type or member is obsolete
 	}
 	
 	protected void emitNewParticles() {
@@ -106,7 +108,9 @@ public class VolumetricComponent2D : ExploderComponent{
 		exploder.disableCollider();
 		float curSize = (8 * speed * (Time.time - exploder.explosionTime) / emission + 0.1f) * particleSizeMultiplyer;
 		for (int i = 0; i < curCount; i++) {
+#pragma warning disable CS0618 // Type or member is obsolete
 			particles[i].size = curSize;
+#pragma warning restore CS0618 // Type or member is obsolete
 			moveParticle(i, Time.deltaTime * speed);
 			particles[i].rotation = Time.time;
 		}
@@ -122,7 +126,9 @@ public class VolumetricComponent2D : ExploderComponent{
 		Color curColor = colorOverLifetime.Evaluate((Time.time - exploder.explosionTime) / duration);
 		curColor.a = alpha;
 		for (int i = 0; i < curCount; i++) {
+#pragma warning disable CS0618 // Type or member is obsolete
 			particles[i].color = curColor;
+#pragma warning restore CS0618 // Type or member is obsolete
 		}
 	}
 	

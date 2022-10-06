@@ -1,0 +1,12 @@
+Features:
+Small play scene
+Up to 4 players (VG large)
+Basic terrain!
+One Worm per team for minimal confusion
+Movment using the built in Character Controller. Now with jumping!
+Now with hit points!
+A camera following the active player
+2 different Functioning weapons! (VG medium)
+
+Grade
+I aim for VG

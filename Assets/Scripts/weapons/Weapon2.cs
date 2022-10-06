@@ -36,9 +36,11 @@ public class Weapon2 : IWeapon
 			RenderRay(SpawnPoint.position, SpawnPoint.position+(SpawnPoint.position - transform.position).normalized*100);
 			return;
 		}
-		else if(hit.collider.gameObject.TryGetComponent<PlayerController>(out var player))
+		else 
 		{
-			player.Damage(10);
+			RenderRay(SpawnPoint.position, hit.point);
+			if (hit.collider.gameObject.TryGetComponent<PlayerController>(out var player))
+				player.Damage(10);
 		}
 	
 	}
