@@ -18,7 +18,6 @@ public class Bullet : MonoBehaviour
 		rb = GetComponent<Rigidbody>();
 		col = GetComponent<Collider>();
 		trans = GetComponent<Transform>();
-		//Carver = GameObject.CreatePrimitive(PrimitiveType.Cube);
 	}
 
 	// Update is called once per frame
@@ -65,7 +64,8 @@ public class Bullet : MonoBehaviour
 			{
 				case "Terrain":
 					//Debug.Log("Terr " + col);
-
+					//Destructible terrain, Unfinished cut for time
+					/*
 					Model m = CSG.Subtract(col.gameObject, _carver);
 					Mesh mesh = m.mesh;
 					mesh.name = "custom";
@@ -79,6 +79,7 @@ public class Bullet : MonoBehaviour
 					col.GetComponent<MeshRenderer>().materials = m.materials.ToArray();
 					col.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
 					col.transform.localScale = Vector3.one;
+					*/
 
 					break;
 				case "Player":
