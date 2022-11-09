@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
-using Parabox.CSG;
+//using Parabox.CSG;
 
 struct Triangle
 {
@@ -142,19 +142,19 @@ public class MeshModify : MonoBehaviour
 		sphere.transform.localScale = Vector3.one * 1.3f;
 
 		// Perform boolean operation
-		Model result = CSG.Subtract(cube, sphere);
+		//Model result = CSG.Subtract(cube, sphere);
 
 		// Create a gameObject to render the result
-		var composite = new GameObject();
-		composite.AddComponent<MeshFilter>().sharedMesh = result.mesh;
-		composite.AddComponent<MeshRenderer>().sharedMaterials = result.materials.ToArray();
+		//var composite = new GameObject();
+		//composite.AddComponent<MeshFilter>().sharedMesh = result.mesh;
+		//composite.AddComponent<MeshRenderer>().sharedMaterials = result.materials.ToArray();
 
 		
 
-		Model m = CSG.Subtract(gameObject,remover);
-		var a = GetComponent<MeshFilter>();
-		a.sharedMesh = m.mesh;
-		GetComponent<MeshRenderer>().sharedMaterials = m.materials.ToArray();
+		//Model m = CSG.Subtract(gameObject,remover);
+		//var a = GetComponent<MeshFilter>();
+		//a.sharedMesh = m.mesh;
+		//GetComponent<MeshRenderer>().sharedMaterials = m.materials.ToArray();
 	}
 
 	// Start is called before the first frame update
