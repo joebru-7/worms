@@ -4,9 +4,17 @@ using UnityEngine;
 
 public class Weapon2 : IWeapon
 {
-	public Transform SpawnPoint;
+	[SerializeField]
+	private Transform _spawnPoint;
+
+	[SerializeField]
+	private int _particleAmt = 1000;
+
+	[SerializeField]
+	private readonly int _damage = 10;
+
+
 	private ParticleSystem _ps;
-	public int particleAmt = 1000;
 
 	public void Start()
 	{
@@ -16,8 +24,8 @@ public class Weapon2 : IWeapon
 	public void RenderRay(Vector3 from,Vector3 to)
 	{
 		_ps.Clear();
-		var step = (to-from)/ particleAmt;
-		for (int i = 0; i < particleAmt; i++)
+		var step = (to-from) / _particleAmt;
+		for (int i = 0; i < _particleAmt; i++)
 		{
 			var e = new ParticleSystem.EmitParams
 			{
@@ -30,17 +38,17 @@ public class Weapon2 : IWeapon
 	}
 	public override void Shoot()
 	{
-		bool ishit = Physics.Raycast(SpawnPoint.position, (SpawnPoint.position - transform.position).normalized, out var hit);
+		bool ishit = Physics.Raycast(_spawnPoint.position, (_spawnPoint.position - transform.position).normalized, out var hit);
 		if (!ishit)
 		{
-			RenderRay(SpawnPoint.position, SpawnPoint.position+(SpawnPoint.position - transform.position).normalized*100);
+			RenderRay(_spawnPoint.position, _spawnPoint.position+(_spawnPoint.position - transform.position).normalized*100);
 			return;
 		}
 		else 
 		{
-			RenderRay(SpawnPoint.position, hit.point);
+			RenderRay(_spawnPoint.position, hit.point);
 			if (hit.collider.gameObject.TryGetComponent<PlayerController>(out var player))
-				player.Damage(10);
+				player.Damage(_damage);
 		}
 	
 	}

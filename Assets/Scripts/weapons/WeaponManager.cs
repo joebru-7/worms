@@ -6,16 +6,17 @@ using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
-	public IWeapon[] weapons;
-	[SerializeField] int _selected;
-	private IWeapon _currentWeapon;
+	[SerializeField]
+	private IWeapon[] _Weapons;
+	[SerializeField] 
+	private IWeapon   _currentWeapon;
 
-	public int Selected { get => _selected; set => _selected = value%(weapons.Length); }
+	private int _selected;
+	private int Selected { get => _selected; set => _selected = value%(_Weapons.Length); }
 
-	// Start is called before the first frame update
 	public void Init(ref IWeapon w)
 	{
-		if (Selected >= weapons.Length)
+		if (Selected >= _Weapons.Length)
 			throw new IndexOutOfRangeException("Selected weapon greater than number of weapons");
 		CreateWeapon(Selected);
 		w = _currentWeapon;
@@ -23,7 +24,7 @@ public class WeaponManager : MonoBehaviour
 
 	void CreateWeapon(int num)
 	{
-		_currentWeapon = Instantiate(weapons[num],transform);
+		_currentWeapon = Instantiate(_Weapons[num],transform);
 	}
 
 	public void SwitchWeapon(ref IWeapon w)

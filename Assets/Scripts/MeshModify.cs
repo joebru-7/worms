@@ -1,30 +1,28 @@
-using System.Collections;
+/*
+ * Unused kept for reference for future projects
+ */
+
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-//using Parabox.CSG;
 
 struct Triangle
 {
-	public Vector3[] verts;
-	public Vector3 a { get => verts[0]; set => verts[0] = value; }
-	public Vector3 b { get => verts[1]; set => verts[1] = value; }
-	public Vector3 c { get => verts[2]; set => verts[2] = value; }
+	public Vector3[] Verts;
+	public Vector3 A { get => Verts[0]; set => Verts[0] = value; }
+	public Vector3 B { get => Verts[1]; set => Verts[1] = value; }
+	public Vector3 C { get => Verts[2]; set => Verts[2] = value; }
 
 	public Triangle(Vector3 a,Vector3 b,Vector3 c)
 	{
-		verts = new Vector3[3];
-		this.a = a;
-		this.b = b;
-		this.c = c;
+		Verts = new Vector3[3] { a, b, c };
 	}
 
 	public void AddToList( List<Vector3> li)
 	{
-		li.Add(a);
-		li.Add(b);
-		li.Add(c);
+		li.Add(A);
+		li.Add(B);
+		li.Add(C);
 	}
 
 	public bool isIntersecting(Triangle other)
@@ -43,14 +41,14 @@ struct Triangle
 		{
 			//Math3d.ClosestPointsOnTwoLines(out Vector3 p1, out Vector3 p2, verts[i], verts[i] - verts[(i + 1) % 3], l.Point, l.Vector);
 
-			if (!Math3d.LineLineIntersection(out Vector3 p1, verts[i], verts[i] - verts[(i + 1) % 3], l.Point, l.Vector))
+			if (!Math3d.LineLineIntersection(out Vector3 p1, Verts[i], Verts[i] - Verts[(i + 1) % 3], l.Point, l.Vector))
 				continue;
 			
 			//if ((p1 - verts[i]).magnitude < closenessConstant) 
 			//	return true;
 
 			if (
-				Math3d.PointOnWhichSideOfLineSegment(this.verts[i], this.verts[(i + 1) % 3], p1) == 0
+				Math3d.PointOnWhichSideOfLineSegment(this.Verts[i], this.Verts[(i + 1) % 3], p1) == 0
 				
 				//)if ((p1 - p2).magnitude < float.Epsilon
 				//)if((p1 - verts[i]).magnitude > 0.1e-20f
@@ -66,13 +64,13 @@ struct Triangle
 
 		for (int i = 0; i < 3; i++)
 		{
-			if (!Math3d.LineLineIntersection(out Vector3 p1, other.verts[i], other.verts[i] - other.verts[(i + 1) % 3], l.Point, l.Vector))
+			if (!Math3d.LineLineIntersection(out Vector3 p1, other.Verts[i], other.Verts[i] - other.Verts[(i + 1) % 3], l.Point, l.Vector))
 				continue;
 
 			//if ((p1 - p2).magnitude < closenessConstant
 			//	 )
 			if(
-				Math3d.PointOnWhichSideOfLineSegment(other.verts[i], other.verts[(i + 1) % 3], Math3d.ProjectPointOnLineSegment(other.verts[i], other.verts[(i + 1) % 3], p1)) == 0
+				Math3d.PointOnWhichSideOfLineSegment(other.Verts[i], other.Verts[(i + 1) % 3], Math3d.ProjectPointOnLineSegment(other.Verts[i], other.Verts[(i + 1) % 3], p1)) == 0
 				)
 			{
 				
@@ -91,7 +89,7 @@ struct Plane
 
 	public Plane(Triangle t)
 	{
-		Math3d.PlaneFrom3Points(out normal, out position, t.a, t.b, t.c);
+		Math3d.PlaneFrom3Points(out normal, out position, t.A, t.B, t.C);
 	}
 
 	public Line Intersect(Plane other)
@@ -157,7 +155,7 @@ public class MeshModify : MonoBehaviour
 		//GetComponent<MeshRenderer>().sharedMaterials = m.materials.ToArray();
 	}
 
-	// Start is called before the first frame update
+
 	public void Subtract(GameObject subtracted)
 	{
 		var startTime = System.DateTime.Now;
@@ -311,13 +309,6 @@ public class MeshModify : MonoBehaviour
 		MeshCollider coll = GetComponent<MeshCollider>();
 		coll.sharedMesh = m;
 		*/
-
-	}
-
-	// Update is called once per frame
-	void Update()
-	{
-
 
 	}
 }

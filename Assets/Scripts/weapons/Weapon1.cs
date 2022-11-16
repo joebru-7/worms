@@ -3,11 +3,15 @@ using UnityEngine;
 
 public class Weapon1 : IWeapon
 {
-	public GameObject BulletPrefab;
-	public Transform SpawnPoint;
 	private Transform myTrans;
-	public static BulletPool pool;
-	public float force = 1000;
+	private static BulletPool pool;
+	[SerializeField]
+	private Transform SpawnPoint;
+	[SerializeField]
+	private GameObject BulletPrefab;
+	[SerializeField]
+
+	private float force = 1000;
 
 	public void Start()
 	{
@@ -16,9 +20,6 @@ public class Weapon1 : IWeapon
 	}
 	public override void Shoot()
 	{
-		//crate bullet
-		//var bullet = GameObject.Instantiate<Rigidbody>(BulletPrefab,new Vector3(0,0,0),Quaternion.identity);
-
 		var bullet = pool.Get();
 		
 		bullet.transform.position = SpawnPoint.position;

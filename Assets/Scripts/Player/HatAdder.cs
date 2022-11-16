@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class HatAdder:MonoBehaviour
 {
-	public static List<GameObject> hats;
+	[SerializeField] 
+	private static List<GameObject> hats;
+	private static System.Random rand = new(1);
 
 	private void Start()
 	{
 		hats ??= Resources.LoadAll<GameObject>("Hats").ToList();
 
-		int selection = new System.Random().Next()%hats.Count;
+		int selection = rand.Next()%hats.Count;
 		Instantiate(hats[selection],transform);
 		hats.RemoveAt(selection);
 	}
