@@ -113,8 +113,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4faa894c24ded154cb285ae2c2b90836, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnPoint: {fileID: 9185211573385855054}
-  particleAmt: 100
+  _spawnPoint: {fileID: 9185211573385855054}
+  _particleAmt: 1000
 --- !u!1 &2786132975839588255
 GameObject:
   m_ObjectHideFlags: 0
