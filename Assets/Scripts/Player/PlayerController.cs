@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Processors;
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
 	private Camera _camera;
 	private AudioListener _audio;
 	private PlayerInput _input;
+	private TMPro.TMP_Text _text;
 
 	//weapons
 	private WeaponManager _weaponManager;
@@ -55,6 +57,7 @@ public class PlayerController : MonoBehaviour
 	public void Damage(int amt)
 	{
 		Health -= amt;
+		_text.text = Health.ToString();
 		if (Health <= 0 && !_dead)
 		{
 			_dead = true;
@@ -83,13 +86,21 @@ public class PlayerController : MonoBehaviour
 		_weaponManager = GetComponentInChildren<WeaponManager>();
 		_weaponManager.Init(ref _weapon);
 
+
 		_input = GetComponent<PlayerInput>();
 
 		PlayerManager.Register(this);
+
+		_text = GetComponentInChildren<TMP_Text>();
+		_text.text = Health.ToString();
 	}
 
 	void Update()
 	{
+		//face tesxt
+		_text.transform.LookAt(Camera.main.transform.position);
+		_text.transform.Rotate(Vector3.up, 180);
+
 		//fall
 		if (!_characterController.isGrounded)
 		{
