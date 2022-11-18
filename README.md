@@ -1,7 +1,7 @@
 # worms
 Worms clone in Unity
 
-Open Project in unity 2021.3.9f1
+Open Project in unity 2021.3.12f1
 
 Controlls
 WASD 	move

@@ -162,11 +162,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f7b23e2d6174124aa89b073f6ce6344, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
+  MoveSpeed: 0
   JumpStrength: 5
-  rotationSpeed: 1
+  RotationSpeed: 1
   gravity: 9.82
-  hp: 100
+  Health: 30
   _active: 0
 --- !u!114 &4163828293154366085
 MonoBehaviour:
@@ -658,7 +658,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37e4296047609a04aa3b6dfd09d7eac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapons:
-  - {fileID: 1881498950898938876, guid: edc90f531229c1f409189a25da2ba838, type: 3}
-  - {fileID: 3005260651095332692, guid: f7f2791e178acf14e9d2b17c8deef3cc, type: 3}
-  _selected: 0
+  _Weapons: []
+  _currentWeapon: {fileID: 0}
